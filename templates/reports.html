@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="page-title">📈 Reports & Analytics</div>
+        <div class="page-subtitle">JOIN queries, Aggregate functions, Subqueries</div>
+    </div>
+</div>
+
+<!-- Stock Value -->
+<div class="card mb-4">
+    <div class="section-title">💰 Stock Value per Medicine (JOIN + SUM aggregate)</div>
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Medicine</th>
+                <th>Category</th>
+                <th>Total Units</th>
+                <th>Stock Value (₹)</th>
+            </tr>
+            {% for r in stock_value %}
+            <tr>
+                <td><strong>{{ r.name }}</strong></td>
+                <td><span class="badge badge-info">{{ r.category }}</span></td>
+                <td>{{ r.total_units }}</td>
+                <td><strong style="color:#059669">₹{{ "%.2f"|format(r.stock_value) }}</strong></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="grid-2 mb-4">
+    <!-- Supplier Stats -->
+    <div class="card">
+        <div class="section-title">🚚 Supplier Performance (JOIN + COUNT)</div>
+        <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>Supplier</th>
+                    <th>City</th>
+                    <th>Batches</th>
+                    <th>Total Value (₹)</th>
+                </tr>
+                {% for r in supplier_stats %}
+                <tr>
+                    <td><strong>{{ r.supplier }}</strong></td>
+                    <td>{{ r.city }}</td>
+                    <td><span class="badge badge-info">{{ r.total_batches }}</span></td>
+                    <td>₹{{ "%.0f"|format(r.total_purchased_value) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <!-- Category Stats -->
+    <div class="card">
+        <div class="section-title">📊 Category Avg Price (AVG aggregate)</div>
+        <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Medicines</th>
+                    <th>Avg Price (₹)</th>
+                </tr>
+                {% for r in category_stats %}
+                <tr>
+                    <td><span class="badge badge-info">{{ r.category }}</span></td>
+                    <td>{{ r.medicine_count }}</td>
+                    <td><strong>₹{{ "%.2f"|format(r.avg_price) }}</strong></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- No valid batch — Subquery -->
+    <div class="card">
+        <div class="section-title">⚠️ No Valid Batch (Subquery)</div>
+        {% if no_valid_batch %}
+        <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Category</th>
+                </tr>
+                {% for r in no_valid_batch %}
+                <tr>
+                    <td><strong>{{ r.name }}</strong></td>
+                    <td><span class="badge badge-warning">{{ r.category }}</span></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align:center; padding:20px; color:#94A3B8;">✅ All medicines have valid batches!</div>
+        {% endif %}
+    </div>
+
+    <!-- Alert Stats -->
+    <div class="card">
+        <div class="section-title">🔔 Alert Summary (COUNT + GROUP BY)</div>
+        {% for r in alert_stats %}
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #E2E8F0">
+            <span>
+                {% if r.alert_type=='EXPIRY_CRITICAL' %}<span class="badge badge-danger">EXPIRY CRITICAL</span>
+                {% elif r.alert_type=='EXPIRY_WARNING' %}<span class="badge badge-warning">EXPIRY WARNING</span>
+                {% else %}<span class="badge badge-info">LOW STOCK</span>{% endif %}
+            </span>
+            <strong style="font-size:1.4rem;color:#1E3A5F">{{ r.total }}</strong>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

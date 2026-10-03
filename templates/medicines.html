@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Medicines{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="page-title">💊 Medicines</div>
+        <div class="page-subtitle">Manage your medicine inventory</div>
+    </div>
+    {% if session.role == 'admin' %}
+    <a href="{{ url_for('add_medicine') }}" class="btn btn-primary">+ Add Medicine</a>
+    {% endif %}
+</div>
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Dosage Form</th>
+                <th>Manufacturer</th>
+                <th>Min Stock</th>
+                <th>Current Stock</th>
+                <th>Status</th>{% if session.role=='admin' %}<th>Actions</th>{% endif %}
+            </tr>
+            {% for m in medicines %}
+            <tr>
+                <td>{{ m.medicine_id }}</td>
+                <td><strong>{{ m.name }}</strong><br><small style="color:#94A3B8">{{ m.description[:50] if m.description
+                        else '' }}</small></td>
+                <td><span class="badge badge-info">{{ m.category }}</span></td>
+                <td>{{ m.dosage_form }}</td>
+                <td>{{ m.manufacturer }}</td>
+                <td>{{ m.min_stock_level }}</td>
+                <td>{{ m.current_quantity or 0 }}</td>
+                <td>{% if m.current_quantity and m.current_quantity < m.min_stock_level %}<span
+                        class="badge badge-danger">LOW</span>{% else %}<span class="badge badge-success">OK</span>{%
+                        endif %}</td>
+                {% if session.role=='admin' %}
+                <td>
+                    <a href="{{ url_for('edit_medicine', mid=m.medicine_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ url_for('delete_medicine', mid=m.medicine_id) }}" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Delete this medicine?')">Del</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

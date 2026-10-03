@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Login — Medicine Expiry Tracker{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content:center; align-items:center; min-height:80vh;">
+  <div class="card" style="width:100%; max-width:400px;">
+    <div style="text-align:center; margin-bottom:24px;">
+      <h2 style="color:#1E3A5F; font-size:1.8rem; margin-bottom:8px;">Welcome Back</h2>
+      <p style="color:#64748B; font-size:14px;">Sign in to manage your inventory</p>
+    </div>
+
+    {% if error %}
+    <div class="flash flash-danger" style="margin-bottom:20px;">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" required placeholder="Enter username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="Enter password">
+      </div>
+      <div class="form-group">
+        <label>Login As</label>
+        <select name="role">
+          <option value="staff">Staff Member</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px;">Sign
+        In</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Suppliers{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="page-title">🚚 Suppliers</div>
+        <div class="page-subtitle">All medicine distributors and suppliers</div>
+    </div>
+    {% if session.role=='admin' %}<a href="{{ url_for('add_supplier') }}" class="btn btn-primary">+ Add Supplier</a>{%
+    endif %}
+</div>
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Supplier Name</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>City / State</th>
+                <th>GST No.</th>
+                <th>Total Batches</th>{% if session.role=='admin' %}<th>Actions</th>{% endif %}
+            </tr>
+            {% for s in suppliers %}
+            <tr>
+                <td>{{ s.supplier_id }}</td>
+                <td><strong>{{ s.name }}</strong></td>
+                <td>{{ s.contact_number }}</td>
+                <td>{{ s.email }}</td>
+                <td>{{ s.city }}, {{ s.state }}</td>
+                <td><code style="font-size:11px">{{ s.gst_number or 'N/A' }}</code></td>
+                <td><span class="badge badge-info">{{ s.total_batches }}</span></td>
+                {% if session.role=='admin' %}
+                <td><a href="{{ url_for('delete_supplier', sid=s.supplier_id) }}" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Delete supplier?')">Del</a></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Stock{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="page-title">📊 Stock Levels</div>
+        <div class="page-subtitle">Current inventory status for all medicines</div>
+    </div>
+</div>
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Medicine</th>
+                <th>Category</th>
+                <th>Current Qty</th>
+                <th>Min Required</th>
+                <th>Status</th>
+                <th>Last Updated</th>
+            </tr>
+            {% for s in stock %}
+            <tr>
+                <td><strong>{{ s.name }}</strong></td>
+                <td><span class="badge badge-info">{{ s.category }}</span></td>
+                <td>
+                    <strong
+                        style="font-size:16px;color:{% if s.stock_status=='LOW' %}#DC2626{% elif s.stock_status=='MEDIUM' %}#D97706{% else %}#059669{% endif %}">
+                        {{ s.current_quantity }}
+                    </strong>
+                </td>
+                <td>{{ s.min_stock_level }}</td>
+                <td>
+                    {% if s.stock_status=='LOW' %}<span class="badge badge-danger">⚠ LOW</span>
+                    {% elif s.stock_status=='MEDIUM' %}<span class="badge badge-warning">~ MEDIUM</span>
+                    {% else %}<span class="badge badge-success">✓ OK</span>{% endif %}
+                </td>
+                <td style="font-size:12px;color:#94A3B8">{{ s.last_updated }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

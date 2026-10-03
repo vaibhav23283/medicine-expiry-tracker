@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — Medicine Expiry Tracker{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-title">🏠 Dashboard</div>
+    <div class="page-subtitle">Welcome back, {{ session.fullname }} ({{ session.role|upper }})</div>
+  </div>
+</div>
+
+{% if stats %}
+<div class="stats-grid">
+  <div class="stat-card stat-blue">
+    <div class="stat-num">{{ stats.total_medicines }}</div>
+    <div class="stat-label">Total Medicines</div>
+  </div>
+  <div class="stat-card stat-teal">
+    <div class="stat-num">{{ stats.total_suppliers }}</div>
+    <div class="stat-label">Suppliers</div>
+  </div>
+  <div class="stat-card stat-navy">
+    <div class="stat-num">{{ stats.active_batches }}</div>
+    <div class="stat-label">Active Batches</div>
+  </div>
+  <div class="stat-card stat-red">
+    <div class="stat-num">{{ stats.critical_alerts }}</div>
+    <div class="stat-label">Critical Alerts</div>
+  </div>
+  <div class="stat-card stat-amber">
+    <div class="stat-num">{{ stats.active_alerts }}</div>
+    <div class="stat-label">Active Alerts</div>
+  </div>
+  <div class="stat-card stat-purple">
+    <div class="stat-num">{{ stats.low_stock_count }}</div>
+    <div class="stat-label">Low Stock Items</div>
+  </div>
+  <div class="stat-card stat-green">
+    <div class="stat-num">{{ stats.expired_count }}</div>
+    <div class="stat-label">Expired Batches</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="grid-2">
+  <!-- Active Alerts -->
+  <div class="card">
+    <div class="section-title">🔔 Active Alerts</div>
+    {% if alerts %}
+    {% for a in alerts %}
+    <div
+      style="padding:10px 12px;margin-bottom:8px;border-radius:8px;border-left:4px solid {% if a.alert_type=='EXPIRY_CRITICAL' %}#DC2626{% elif a.alert_type=='EXPIRY_WARNING' %}#D97706{% else %}#2563EB{% endif %};background:{% if a.alert_type=='EXPIRY_CRITICAL' %}#FEE2E2{% elif a.alert_type=='EXPIRY_WARNING' %}#FEF3C7{% else %}#DBEAFE{% endif %}">
+      <div style="font-weight:600;font-size:13px;color:#1E293B">{{ a.medicine_name }}</div>
+      <div style="font-size:12px;color:#64748B;margin-top:2px">{{ a.alert_message }}</div>
+      <div style="font-size:11px;color:#94A3B8;margin-top:4px">{{ a.created_at }}</div>
+    </div>
+    {% endfor %}
+    <a href="{{ url_for('alerts') }}" class="btn btn-outline btn-sm mt-4">View All Alerts →</a>
+    {% else %}
+    <div style="text-align:center; padding:20px; color:#94A3B8;">✅ No active alerts!</div>
+    {% endif %}
+  </div>
+
+  <!-- Near Expiry -->
+  <div class="card">
+    <div class="section-title">⚠️ Expiring in 30 Days</div>
+    {% if near_expiry %}
+    <div class="table-wrap">
+      <table>
+        <tr>
+          <th>Medicine</th>
+          <th>Batch</th>
+          <th>Expiry</th>
+          <th>Days Left</th>
+        </tr>
+        {% for b in near_expiry %}
+        <tr>
+          <td><strong>{{ b.medicine_name }}</strong></td>
+          <td><code
+              style="background:#F1F5F9;padding:2px 6px;border-radius:4px;font-size:12px">{{ b.batch_number }}</code>
+          </td>
+          <td>{{ b.expiry_date }}</td>
+          <td><span class="badge badge-danger">{{ b.days_remaining }} days</span></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <a href="{{ url_for('batches') }}" class="btn btn-outline btn-sm mt-4">View All Batches →</a>
+    {% else %}
+    <div style="text-align:center; padding:20px; color:#94A3B8;">✅ No batches expiring soon!</div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Low Stock Table (Optional expansion) -->
+{% if low_stock %}
+<div class="card mt-6">
+  <div class="section-title">📉 Low Stock Summary</div>
+  <!-- Detailed table similar to stock.html but filtered -->
+</div>
+{% endif %}
+{% endblock %}

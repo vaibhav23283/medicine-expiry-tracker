@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Medicine Expiry Tracker{% endblock %}</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #F1F5F9;
+      color: #1E293B
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #1E3A5F;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+    }
+
+    .navbar .brand {
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .navbar .brand span {
+      color: #34D399
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px
+    }
+
+    .nav-links a {
+      color: #CBD5E1;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: #2563EB;
+      color: #fff
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .nav-right .user-info {
+      color: #94A3B8;
+      font-size: 13px
+    }
+
+    .nav-right .role-badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .role-admin {
+      background: #DC2626;
+      color: #fff
+    }
+
+    .role-staff {
+      background: #059669;
+      color: #fff
+    }
+
+    .btn-logout {
+      background: #374151;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px
+    }
+
+    .btn-logout:hover {
+      background: #4B5563
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 24px
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1E3A5F
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: #64748B;
+      margin-top: 2px
+    }
+
+    /* Cards */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08)
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 9px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s
+    }
+
+    .btn-primary {
+      background: #2563EB;
+      color: #fff
+    }
+
+    .btn-primary:hover {
+      background: #1D4ED8
+    }
+
+    .btn-success {
+      background: #059669;
+      color: #fff
+    }
+
+    .btn-success:hover {
+      background: #047857
+    }
+
+    .btn-danger {
+      background: #DC2626;
+      color: #fff
+    }
+
+    .btn-danger:hover {
+      background: #B91C1C
+    }
+
+    .btn-warning {
+      background: #D97706;
+      color: #fff
+    }
+
+    .btn-warning:hover {
+      background: #B45309
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px;
+      border-radius: 6px
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #2563EB;
+      color: #2563EB
+    }
+
+    .btn-outline:hover {
+      background: #2563EB;
+      color: #fff
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    th {
+      background: #1E3A5F;
+      color: #fff;
+      padding: 11px 14px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    td {
+      padding: 10px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid #E2E8F0
+    }
+
+    tr:hover td {
+      background: #F8FAFC
+    }
+
+    tr:last-child td {
+      border-bottom: none
+    }
+
+    /* Badges */
+    .badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .badge-danger {
+      background: #FEE2E2;
+      color: #DC2626
+    }
+
+    .badge-warning {
+      background: #FEF3C7;
+      color: #D97706
+    }
+
+    .badge-success {
+      background: #D1FAE5;
+      color: #059669
+    }
+
+    .badge-info {
+      background: #DBEAFE;
+      color: #2563EB
+    }
+
+    .badge-gray {
+      background: #E2E8F0;
+      color: #475569
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 18px
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1E293B;
+      transition: border 0.2s
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px
+    }
+
+    /* Flash messages */
+    .flash {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .flash-success {
+      background: #D1FAE5;
+      color: #065F46;
+      border-left: 4px solid #059669
+    }
+
+    .flash-danger {
+      background: #FEE2E2;
+      color: #991B1B;
+      border-left: 4px solid #DC2626
+    }
+
+    /* Stat cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      border-left: 4px solid
+    }
+
+    .stat-card .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1
+    }
+
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: #64748B;
+      margin-top: 4px
+    }
+
+    .stat-blue {
+      border-color: #2563EB
+    }
+
+    .stat-blue .stat-num {
+      color: #2563EB
+    }
+
+    .stat-green {
+      border-color: #059669
+    }
+
+    .stat-green .stat-num {
+      color: #059669
+    }
+
+    .stat-red {
+      border-color: #DC2626
+    }
+
+    .stat-red .stat-num {
+      color: #DC2626
+    }
+
+    .stat-amber {
+      border-color: #D97706
+    }
+
+    .stat-amber .stat-num {
+      color: #D97706
+    }
+
+    .stat-purple {
+      border-color: #7C3AED
+    }
+
+    .stat-purple .stat-num {
+      color: #7C3AED
+    }
+
+    .stat-teal {
+      border-color: #0D9488
+    }
+
+    .stat-teal .stat-num {
+      color: #0D9488
+    }
+
+    .stat-navy {
+      border-color: #1E3A5F
+    }
+
+    .stat-navy .stat-num {
+      color: #1E3A5F
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px
+    }
+
+    .mt-4 {
+      margin-top: 16px
+    }
+
+    .mt-6 {
+      margin-top: 24px
+    }
+
+    .mb-4 {
+      margin-bottom: 16px
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1E3A5F;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #E2E8F0
+    }
+  </style>
+</head>
+
+<body>
+  {% if session.user_id %}
+  <nav class="navbar">
+    <div class="brand">💊 Medicine Expiry <span>Tracker</span></div>
+    <div class="nav-links">
+      <a href="{{ url_for('dashboard') }}" {% if request.endpoint=='dashboard' %}class="active" {% endif %}>🏠
+        Dashboard</a>
+      <a href="{{ url_for('medicines') }}" {% if 'medicine' in request.endpoint %}class="active" {% endif %}>💊
+        Medicines</a>
+      <a href="{{ url_for('suppliers') }}" {% if 'supplier' in request.endpoint %}class="active" {% endif %}>🚚
+        Suppliers</a>
+      <a href="{{ url_for('batches') }}" {% if 'batch' in request.endpoint %}class="active" {% endif %}>📦 Batches</a>
+      <a href="{{ url_for('stock') }}" {% if request.endpoint=='stock' %}class="active" {% endif %}>📊 Stock</a>
+      <a href="{{ url_for('alerts') }}" {% if request.endpoint=='alerts' %}class="active" {% endif %}>🔔 Alerts</a>
+      <a href="{{ url_for('reports') }}" {% if request.endpoint=='reports' %}class="active" {% endif %}>📈 Reports</a>
+    </div>
+    <div class="nav-right">
+      <div class="user-info">{{ session.fullname }}</div>
+      <span class="role-badge role-{{ session.role }}">{{ session.role|upper }}</span>
+      <a href="{{ url_for('logout') }}"><button class="btn-logout">Logout</button></a>
+    </div>
+  </nav>
+  {% endif %}
+  <div {% if session.user_id %}class="container" {% endif %}>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+    <div class="flash flash-{{ cat }}">{{ msg }}</div>
+    {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>
